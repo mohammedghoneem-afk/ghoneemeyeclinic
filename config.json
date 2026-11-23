@@ -1,0 +1,205 @@
+{
+  "clinic": {
+    "name": {
+      "ar": "عيادة د. محمد غنيم",
+      "en": "Dr. Mohamed Ghoneem Clinic"
+    },
+    "tagline": {
+      "ar": "شكراً لتواصلكم مع عيادة د. محمد غنيم! كيف يمكننا مساعدتكم؟",
+      "en": "Thank you for contacting Dr. Mohamed Ghoneem's clinic. How can we help you?"
+    },
+    "about": {
+      "ar": "احجز يومك بسهولة في أحد فروعنا بالإسكندرية أو القاهرة (الشيخ زايد، المهندسين). الدخول للدكتور بنظام الأسبقية، من يصل أولاً يدخل أولاً.",
+      "en": "Book your day easily at any of our branches in Alexandria or Cairo (Sheikh Zayed, Mohandessin). Entry to the doctor is first come, first served."
+    },
+    "phone": "+201503009609",
+    "whatsappNumber": "201503009609",
+    "facebookUrl": "https://www.facebook.com/share/17MPReCKBr/?mibextid=wwXIfr",
+    "queueNote": {
+      "ar": "الدخول للدكتور بنظام الأسبقية: من يصل أولاً يدخل أولاً، دون مواعيد محددة. الحجز يسجل يومك فقط.",
+      "en": "Entry to the doctor is first come, first served, with no specific times. Booking registers your day only."
+    },
+    "title": {
+      "ar": "استشاري جراحات الشبكية والجسم الزجاجي",
+      "en": "Vitreoretinal Consultant"
+    }
+  },
+  "branches": [
+    {
+      "id": "alexandria",
+      "name": {
+        "ar": "فرع الإسكندرية - رشدي",
+        "en": "Alexandria - Rushdy branch"
+      },
+      "address": {
+        "ar": "٤٠٢ طريق الحرية - رشدي - الإسكندرية، برج السنهوري - أعلى أوبل للسيارات",
+        "en": "402 El Horreya Road, Rushdy, Alexandria. El Sanhoury Tower, above Opel Cars"
+      },
+      "mapUrl": "https://maps.app.goo.gl/vuFwhJwD97SLmgjk7?g_st=ic",
+      "workingHours": {
+        "sat": [
+          [
+            "20:00",
+            "22:00"
+          ]
+        ],
+        "mon": [
+          [
+            "20:00",
+            "22:00"
+          ]
+        ],
+        "wed": [
+          [
+            "17:00",
+            "19:00"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "icare-smouha",
+      "name": {
+        "ar": "فرع الإسكندرية - مركز آي كير سموحة",
+        "en": "Alexandria - i Care Center, Smouha"
+      },
+      "address": {
+        "ar": "مركز آي كير - سموحة - الإسكندرية",
+        "en": "i Care Center, Smouha, Alexandria"
+      },
+      "phone": "19732",
+      "mapUrl": "https://maps.app.goo.gl/aer2t6kf8orpTXL39?g_st=com.google.maps.preview.copy",
+      "workingHours": {
+        "sun": [
+          [
+            "12:00",
+            "17:00"
+          ]
+        ],
+        "tue": [
+          [
+            "12:00",
+            "17:00"
+          ]
+        ],
+        "thu": [
+          [
+            "12:00",
+            "17:00"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "sheikh-zayed",
+      "name": {
+        "ar": "فرع القاهرة - الشيخ زايد",
+        "en": "Cairo - Sheikh Zayed branch"
+      },
+      "address": {
+        "ar": "أركان بلازا ٢ - البرج الطبي - مبنى ٧ - الدور الرابع - الشيخ زايد",
+        "en": "Medical Tower 7, C4-6, Arkan Plaza 2, El Sheikh Zayed, Giza 12588"
+      },
+      "mapUrl": "https://maps.app.goo.gl/PERx8e7dN5XjJiUa8?g_st=ic",
+      "workingHours": {
+        "sat": [
+          [
+            "12:00",
+            "15:00"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "mohandessin",
+      "name": {
+        "ar": "فرع القاهرة - المهندسين",
+        "en": "Cairo - Mohandessin branch"
+      },
+      "address": {
+        "ar": "مركز برادة للعيون - ١٣ ميدان سفنكس، المهندسين - عمارة البنك الأهلي - الجيزة",
+        "en": "Barada Eye Center, 13 Sphinx Square, Mohandessin, Ahly Bank building, Giza"
+      },
+      "mapUrl": "https://maps.app.goo.gl/923LQjkK5ax1r7Z47?g_st=ic",
+      "workingHours": {
+        "sat": [
+          [
+            "10:00",
+            "12:00"
+          ]
+        ]
+      }
+    }
+  ],
+  "timezone": "Africa/Cairo",
+  "defaultCountryCode": "20",
+  "maxAdvanceDays": 60,
+  "services": [
+    {
+      "id": "consultation",
+      "ar": "كشف جديد",
+      "en": "New consultation"
+    },
+    {
+      "id": "followup",
+      "ar": "متابعة",
+      "en": "Follow-up visit"
+    }
+  ],
+  "automation": {
+    "reminderHoursBefore": 24,
+    "autoMarkMissed": true,
+    "missedGraceMinutes": 45,
+    "followUpAfterDays": 3
+  },
+  "whatsapp": {
+    "useTemplates": true,
+    "apiVersion": "v21.0",
+    "templates": {
+      "confirmation": {
+        "ar": "appointment_confirmation_ar",
+        "en": "appointment_confirmation_en"
+      },
+      "reminder": {
+        "ar": "appointment_reminder_ar",
+        "en": "appointment_reminder_en"
+      },
+      "missed": {
+        "ar": "missed_appointment_ar",
+        "en": "missed_appointment_en"
+      }
+    },
+    "enabled": false
+  },
+  "maxBookingsPerSession": 0,
+  "media": {
+    "heroImage": "/media/doctor.jpg",
+    "aboutImage": "/media/surgery.jpg",
+    "gallery": [
+      {
+        "src": "/media/conference.jpg",
+        "alt": {
+          "ar": "د. محمد غنيم في المؤتمر السنوي العشرين للجمعية المصرية للشبكية والجسم الزجاجي",
+          "en": "Dr. Mohamed Ghoneem at the 20th annual meeting of the Egyptian Vitreoretinal Society"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "facebookUrl": "https://www.facebook.com/share/v/1CNg7BDqaq/?mibextid=wwXIfr"
+      },
+      {
+        "facebookUrl": "https://www.facebook.com/share/r/1MSDKcUY7t/?mibextid=wwXIfr"
+      },
+      {
+        "facebookUrl": "https://www.facebook.com/share/v/1KgAyuC1rD/?mibextid=wwXIfr"
+      },
+      {
+        "facebookUrl": "https://www.facebook.com/share/r/1ADTg6kSuZ/?mibextid=wwXIfr"
+      },
+      {
+        "facebookUrl": "https://www.facebook.com/share/r/19uWE8wa3o/?mibextid=wwXIfr"
+      }
+    ]
+  }
+}

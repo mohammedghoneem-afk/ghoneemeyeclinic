@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ghoneem-clinic
+    runtime: node
+    plan: starter
+    buildCommand: echo "no build needed"
+    startCommand: node server.js
+    healthCheckPath: /api/config
+    disk:
+      name: clinic-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
+    envVars:
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: TRUST_PROXY
+        value: "1"
+      - key: NODE_VERSION
+        value: "22"

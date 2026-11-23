@@ -1,0 +1,8 @@
+{
+  "name": "clinic-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Clinic website with online booking, WhatsApp automation and missed-appointment recontact",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
