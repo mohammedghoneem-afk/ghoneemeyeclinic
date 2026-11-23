@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Clinic dashboard</title>
+<style>
+:root{--bg:#f6faf9;--card:#fff;--ink:#12302c;--muted:#5c7773;--brand:#0f766e;--line:#d9e7e4;--warn:#b54708;--err:#b42318;--ok:#067647}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-size:1.3rem;margin:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.pill{font-size:.8rem;padding:3px 10px;border-radius:99px;background:#fef0c7;color:var(--warn)}
+.pill.live{background:#dcfae6;color:var(--ok)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-size:1.6rem}.stat span{color:var(--muted);font-size:.85rem}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab,button.act{font:inherit;border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 12px;cursor:pointer;color:inherit;text-decoration:none;font-size:.88rem;display:inline-block}
+.tab.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:10px}
+.card h3{margin:0 0 2px;font-size:1rem}
+.meta{color:var(--muted);font-size:.88rem}
+.badge{display:inline-block;font-size:.75rem;padding:2px 9px;border-radius:99px;margin-inline-start:6px;vertical-align:middle}
+.b-booked{background:#e0f2fe;color:#075985}.b-attended{background:#dcfae6;color:var(--ok)}
+.b-missed{background:#fee4e2;color:var(--err)}.b-cancelled{background:#eee;color:#555}
+.actions{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start;justify-content:flex-end}
+button.act.wa,a.act.wa{background:#25d366;color:#fff;border-color:#25d366}
+button.act.danger{color:var(--err)}
+.log{font-size:.78rem;color:var(--muted);margin-top:6px}
+.empty{text-align:center;color:var(--muted);padding:40px}
+#login{max-width:340px;margin:12vh auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+#login input{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit;margin:10px 0}
+#login button{width:100%;padding:11px;border:0;border-radius:10px;background:var(--brand);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.err{color:var(--err);font-size:.9rem;min-height:1.3em}
+@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.card{grid-template-columns:1fr}.actions{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<div id="login">
+  <h1>Staff login</h1>
+  <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  <div class="err" id="lerr"></div>
+  <button id="go">Sign in</button>
+</div>
+<div class="wrap" id="app" hidden>
+  <div class="top">
+    <h1>Appointments</h1>
+    <div><span class="pill" id="mode"></span> <button class="act" id="refresh">Refresh</button> <button class="act" id="out">Sign out</button></div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="list"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let pw=sessionStorage.getItem('pw')||'', data=null, tab='today', services={}, branches={};
+const TABS=[['today','Today'],['upcoming','Upcoming'],['missed','Missed'],['recovered','Recovered'],['all','All']];
+
+async function call(path,opts={}){
+  const r=await fetch(path,{...opts,headers:{'Content-Type':'application/json','X-Admin-Password':pw}});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401||r.status===503||r.status===429) throw Object.assign(new Error(j.error||'Auth error'),{auth:true});
+  return j;
+}
+async function load(){
+  try{
+    data=await call('/api/admin/appointments');
+    services=Object.fromEntries(data.services.map(s=>[s.id,s.en]));
+    branches=Object.fromEntries(data.branches.map(b=>[b.id,b.name.en]));
+    $('login').hidden=true;$('app').hidden=false;render();
+  }catch(e){
+    $('app').hidden=true;$('login').hidden=false;
+    $('lerr').textContent=pw?e.message:'';
+    sessionStorage.removeItem('pw');
+  }
+}
+$('go').onclick=()=>{pw=$('pw').value;sessionStorage.setItem('pw',pw);load()};
+$('pw').onkeydown=e=>{if(e.key==='Enter')$('go').click()};
+$('out').onclick=()=>{sessionStorage.removeItem('pw');pw='';location.reload()};
+$('refresh').onclick=load;
+
+function filtered(){
+  const a=data.appointments, today=data.today;
+  switch(tab){
+    case 'today':return a.filter(x=>x.date===today);
+    case 'upcoming':return a.filter(x=>x.date>=today&&x.status==='booked');
+    case 'missed':return a.filter(x=>x.status==='missed'&&!x.recovered);
+    case 'recovered':return a.filter(x=>x.status==='missed'&&x.recovered);
+    default:return [...a].reverse();
+  }
+}
+function render(){
+  const a=data.appointments, today=data.today, wk=new Date(today+'T00:00:00Z'); wk.setUTCDate(wk.getUTCDate()-7);
+  const wkS=wk.toISOString().slice(0,10);
+  $('mode').textContent=!data.whatsappEnabled?'WhatsApp API: off · use the WhatsApp buttons':(data.whatsappLive?'WhatsApp: live':'WhatsApp: dry-run (not sending)');
+  $('mode').className='pill'+(data.whatsappLive?' live':'');
+  $('stats').innerHTML=[
+    [a.filter(x=>x.date===today&&x.status!=='cancelled').length,'Today'],
+    [a.filter(x=>x.date>=today&&x.status==='booked').length,'Upcoming'],
+    [a.filter(x=>x.status==='missed'&&x.date>=wkS).length,'Missed (7 days)'],
+    [a.filter(x=>x.status==='missed'&&!x.recovered).length,'Awaiting rebook']
+  ].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
+  $('tabs').innerHTML=TABS.map(([k,l])=>`<button class="tab ${k===tab?'on':''}" data-t="${k}">${l}</button>`).join('');
+  $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
+  const list=filtered(), box=$('list'); box.innerHTML='';
+  if(!list.length){box.innerHTML='<div class="empty">Nothing here.</div>';return}
+  for(const x of list){
+    const el=document.createElement('div'); el.className='card';
+    const left=document.createElement('div');
+    const h=document.createElement('h3'); h.textContent=x.name;
+    const bd=document.createElement('span'); bd.className='badge b-'+x.status; bd.textContent=x.status+(x.recovered?' · rebooked':'');
+    h.appendChild(bd);
+    const m1=document.createElement('div'); m1.className='meta'; m1.textContent=`${x.date} (${x.sessionStart}–${x.sessionEnd}) · ${branches[x.branch]||''} · ${services[x.service]||x.service} · +${x.phone}`;
+    left.append(h,m1);
+    if(x.notes){const n=document.createElement('div');n.className='meta';n.textContent='“'+x.notes+'”';left.appendChild(n)}
+    const log=document.createElement('div'); log.className='log';
+    log.textContent=(x.messages||[]).map(g=>`${g.kind}: ${g.status}${g.error?' ('+g.error+')':''}`).join(' · ')+(x.recontactCount?` · contacted: ${x.recontactCount}×`:'');
+    if(log.textContent) left.appendChild(log);
+    const act=document.createElement('div'); act.className='actions';
+    const btn=(label,cls,fn)=>{const b=document.createElement('button');b.className='act '+(cls||'');b.textContent=label;b.onclick=async()=>{b.disabled=true;await fn();await load()};act.appendChild(b)};
+    if(x.status==='booked'){
+      btn('✓ Attended','',()=>setStatus(x,'attended'));
+      btn('No-show','danger',()=>{if(confirm(data.whatsappEnabled?'Mark as no-show and send the recontact message now?':'Mark as no-show?'))return setStatus(x,'missed')});
+      btn('Cancel','',()=>setStatus(x,'cancelled'));
+    }
+    if(x.status==='missed'){
+      if(data.whatsappEnabled) btn('Resend via API','wa',async()=>{await call(`/api/admin/appointments/${x.id}/recontact`,{method:'POST',body:'{}'})});
+      else if(!x.recovered) btn(x.recontactCount?'Contacted again':'Mark contacted','',async()=>{await call(`/api/admin/appointments/${x.id}/contacted`,{method:'POST',body:'{}'})});
+      btn('Attended late','',()=>setStatus(x,'attended'));
+    }
+    const wa=document.createElement('a');wa.className='act'+(x.status==='missed'?' wa':'');wa.target='_blank';wa.rel='noopener';
+    wa.href=x.status==='missed'?x.recontactLink:x.chatLink;wa.textContent=x.status==='missed'?'WhatsApp patient (prefilled)':'Open WhatsApp';act.appendChild(wa);
+    el.append(left,act); box.appendChild(el);
+  }
+}
+function setStatus(x,status){return call('/api/admin/appointments/'+x.id,{method:'POST',body:JSON.stringify({status})})}
+if(pw) load();
+setInterval(()=>{if(!$('app').hidden)load()},60000);
+</script>
+</body>
+</html>

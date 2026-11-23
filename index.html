@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f9fc;--card:#fff;--ink:#10283c;--muted:#566b7d;--brand:#0a5c99;--brand-d:#084a7a;
+  --accent:#e6f1fa;--line:#d6e4f0;--err:#b42318;--ok:#067647;--wa:#25d366;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Cairo,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:10;background:rgba(246,250,249,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-weight:700;font-size:1.2rem;color:var(--brand)}
+.nav{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:12px 22px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;transition:.15s}
+.btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:var(--brand-d)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink);padding:8px 14px}
+.btn-ghost:hover{background:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.hero{padding:56px 0 40px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+.hero h1{font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.2;margin:0 0 14px}
+.hero p{color:var(--muted);font-size:1.1rem;margin:0 0 24px;max-width:46ch}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+.chip{display:inline-block;background:var(--accent);color:var(--brand-d);font-weight:600;font-size:.9rem;padding:4px 14px;border-radius:99px;margin-bottom:12px}
+.lead{color:var(--ink)!important;font-size:1.15rem!important;font-weight:600}
+.portrait{position:relative}.portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;border-radius:28px;display:block;box-shadow:0 20px 50px rgba(10,92,153,.22)}
+.bcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.bcards .branch-block{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.about{display:grid;grid-template-columns:320px 1fr;gap:32px;align-items:center}
+.about img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:24px;display:block}
+.videos .vid.fb{aspect-ratio:9/16;max-width:340px;width:100%;margin-inline:auto}
+.vlink{display:block;text-align:center;font-size:.85rem;margin-top:6px;color:var(--brand);font-weight:600}
+.hero-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:20px;margin-bottom:14px;display:block}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:16px;display:block;cursor:zoom-in}
+.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.videos .vid{background:#000;border-radius:16px;overflow:hidden;aspect-ratio:16/9}
+.videos iframe,.videos video{width:100%;height:100%;border:0;display:block}
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+#lightbox img{max-width:100%;max-height:100%;border-radius:12px}
+.hours-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}
+.hours-card h3{margin:0 0 12px;font-size:1.05rem}
+.branch-block{padding:10px 0;border-bottom:1px dashed var(--line)}.branch-block:last-child{border:0}
+.branch-block h4{margin:0 0 2px;font-size:1rem;color:var(--brand)}.branch-block .addr{font-size:.85rem;color:var(--muted);margin-bottom:4px}
+.branch-block a.map{font-size:.85rem;color:var(--brand);font-weight:600}
+.branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.bopt{text-align:start;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font:inherit;color:inherit}
+.bopt strong{display:block}.bopt small{color:var(--muted);font-size:.8rem;line-height:1.4;display:block;margin-top:2px}
+.bopt.sel{border-color:var(--brand);background:var(--accent);outline:2px solid var(--brand)}
+.queue{background:var(--accent);border-radius:12px;padding:10px 14px;font-size:.92rem;color:var(--brand-d);margin:0 0 10px}
+.hours-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:2px 12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.95rem}
+.hours-row:last-child{border:0}.hours-row .closed{color:var(--muted)}
+section{padding:40px 0}
+h2{font-size:1.6rem;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 24px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.step b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--brand);margin-bottom:10px}
+.step h4{margin:0 0 4px}.step p{margin:0;color:var(--muted);font-size:.95rem}
+.book{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px;display:grid;gap:22px}
+.book-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+label{display:block;font-weight:600;font-size:.92rem;margin-bottom:6px}
+input,select,textarea{width:100%;font:inherit;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:1px}
+textarea{resize:vertical;min-height:70px}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.day{flex:0 0 auto;min-width:66px;padding:8px 6px;text-align:center;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font:inherit;color:inherit}
+.day small{display:block;color:var(--muted);font-size:.75rem}.day strong{font-size:1.15rem}
+.day.sel{background:var(--brand);color:#fff;border-color:var(--brand)}.day.sel small{color:#d4efeb}
+.day:disabled{opacity:.4;cursor:not-allowed}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.slot{padding:10px 6px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;cursor:pointer;color:inherit}
+.slot:hover{border-color:var(--brand)}.slot.sel{background:var(--brand);color:#fff;border-color:var(--brand)}
+.note{color:var(--muted);font-size:.92rem;padding:10px 0}
+.err{color:var(--err);font-size:.92rem;min-height:1.2em}
+.success{display:none;text-align:center;padding:28px 10px}
+.success .tick{width:64px;height:64px;border-radius:50%;background:#dcfae6;color:var(--ok);display:grid;place-items:center;font-size:2rem;margin:0 auto 12px}
+footer{border-top:1px solid var(--line);margin-top:30px;padding:28px 0 90px;color:var(--muted);font-size:.95rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+.fab{position:fixed;inset-block-end:18px;inset-inline-end:18px;background:var(--wa);color:#fff;border-radius:999px;padding:13px 20px;font-weight:700;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.2);display:flex;gap:8px;align-items:center;z-index:20}
+.fab svg{width:22px;height:22px;fill:#fff}
+@media(max-width:560px){.brand{font-size:.95rem;line-height:1.2}header .nav{gap:6px}header .btn{white-space:nowrap;padding:8px 12px;font-size:.88rem}header .wrap{height:60px}}
+@media(max-width:780px){
+  .hero .wrap,.book-grid,.steps,.branches,.about{grid-template-columns:1fr}
+  .book{padding:20px}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="brand" id="brand">…</div>
+  <div class="nav">
+    <button class="btn btn-ghost" id="langBtn" type="button"></button>
+    <a class="btn btn-primary" href="#book" data-i="bookNow"></a>
+  </div>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <div>
+    <span class="chip" id="title"></span>
+    <h1 id="docName"></h1>
+    <p id="tagline" class="lead"></p>
+    <p id="about"></p>
+    <div class="queue" id="queueTop"></div>
+    <div class="cta">
+      <a class="btn btn-primary" href="#book" data-i="bookNow"></a>
+      <a class="btn btn-ghost" id="waCta" target="_blank" rel="noopener" data-i="chatWa"></a>
+    </div>
+  </div>
+  <div class="portrait"><img id="heroImg" alt="" hidden></div>
+</div></section>
+
+<section id="branchesSec"><div class="wrap">
+  <h2 data-i="hours"></h2><p class="sub" data-i="branchesSub"></p>
+  <div class="bcards" id="hours"></div>
+</div></section>
+
+<section id="aboutSec" hidden><div class="wrap about">
+  <img id="aboutImg" alt="">
+  <div><h2 id="aboutTitle"></h2><p class="sub" id="aboutText"></p></div>
+</div></section>
+
+<section><div class="wrap">
+  <h2 data-i="howTitle"></h2><p class="sub" data-i="howSub"></p>
+  <div class="steps">
+    <div class="step"><b>1</b><h4 data-i="s1t"></h4><p data-i="s1p"></p></div>
+    <div class="step"><b>2</b><h4 data-i="s2t"></h4><p data-i="s2p"></p></div>
+    <div class="step"><b>3</b><h4 data-i="s3t"></h4><p data-i="s3p"></p></div>
+  </div>
+</div></section>
+
+<section id="gallery" hidden><div class="wrap"><h2 data-i="galleryTitle"></h2><p class="sub"></p><div class="gallery" id="galleryGrid"></div></div></section>
+<section id="videos" hidden><div class="wrap"><h2 data-i="videosTitle"></h2><p class="sub"></p><div class="videos" id="videosGrid"></div></div></section>
+
+<section id="book"><div class="wrap">
+  <h2 data-i="formTitle"></h2><p class="sub" data-i="formSub"></p>
+  <form class="book" id="form" novalidate>
+    <div class="book-grid">
+      <div><label for="name" data-i="name"></label><input id="name" name="name" autocomplete="name" maxlength="80" required></div>
+      <div><label for="phone" data-i="phone"></label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="01XXXXXXXXX" required></div>
+      <div><label for="service" data-i="service"></label><select id="service" name="service"></select></div>
+      <div><label for="notes" data-i="notes"></label><textarea id="notes" name="notes" maxlength="300"></textarea></div>
+    </div>
+    <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div>
+      <label data-i="pickBranch"></label>
+      <div class="branches" id="branches"></div>
+    </div>
+    <div>
+      <label data-i="pickDay"></label>
+      <div class="days" id="days"></div>
+    </div>
+    <div>
+      <div class="note" id="slotNote"></div>
+      <div class="queue" id="queueBox" hidden></div>
+    </div>
+    <div class="err" id="err" role="alert"></div>
+    <button class="btn btn-primary" id="submit" type="submit" data-i="confirm"></button>
+    <p class="note" data-i="consent" style="margin:0"></p>
+  </form>
+  <div class="book success" id="success">
+    <div class="tick">✓</div>
+    <h2 data-i="doneTitle"></h2>
+    <p id="doneText" class="sub"></p>
+    <a class="btn btn-primary" id="doneWa" target="_blank" rel="noopener" data-i="doneWa" style="margin-inline-end:8px"></a><button class="btn btn-ghost" id="again" type="button" data-i="another"></button>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div id="fBranches"></div>
+  <div><strong id="fName"></strong><br><span data-i="callUs"></span> <a id="fPhone" dir="ltr"></a><br><a id="fFb" target="_blank" rel="noopener" data-i="facebook"></a></div>
+</div></footer>
+
+<div id="lightbox"><img alt=""></div>
+<a class="fab" id="fab" target="_blank" rel="noopener">
+  <span aria-hidden="true">💬</span>
+  <span data-i="chatWa"></span>
+</a>
+
+<script>
+const I18N = {
+  ar:{bookNow:"احجز يومك",chatWa:"تواصل عبر واتساب",hours:"الفروع ومواعيد العمل",galleryTitle:"صور من العيادة",branchesSub:"اختر الفرع الأنسب لك. الدخول بنظام الأسبقية في جميع الفروع.",aboutTitle:"عن الدكتور",watchFb:"شاهد على فيسبوك",videosTitle:"فيديوهات",closed:"مغلق",
+    howTitle:"الحجز بسيط وسريع",howSub:"ثلاث خطوات بسيطة.",
+    s1t:"اختر الفرع واليوم",s1p:"نعرض لك الأيام المتاحة في كل فرع.",s2t:"اكتب بياناتك",s2p:"الاسم ورقم الواتساب فقط.",s3t:"احضر في يومك",s3p:"الدخول للدكتور بنظام الأسبقية، من يصل أولاً يدخل أولاً.",
+    formTitle:"احجز الآن",formSub:"اختر الفرع واليوم واكتب بياناتك. الحجز يسجل يومك فقط، والدخول بنظام الأسبقية.",
+    name:"الاسم بالكامل",phone:"رقم الواتساب",service:"نوع الزيارة",notes:"ملاحظات (اختياري)",
+    pickBranch:"اختر الفرع",pickDay:"اختر اليوم",e_branch:"اختر الفرع أولاً.",selectBranchFirst:"اختر الفرع لعرض الأيام المتاحة.",facebook:"صفحتنا على فيسبوك",directions:"الاتجاهات على الخريطة",confirm:"تسجيل الحجز",
+    consent:"بالضغط على تسجيل الحجز قد نتواصل معك على واتساب بخصوص حجزك.",
+    doneTitle:"تم تسجيل حجزك",another:"حجز يوم آخر",callUs:"اتصل بنا:",
+    selectDayFirst:"اختر اليوم الذي تريد الحضور فيه.",noDays:"لا توجد أيام متاحة حالياً في هذا الفرع.",full:"اكتمل العدد",dayInfo:(w)=>`فترة الكشف: ${w}. الدخول بنظام الأسبقية (من يصل أولاً يدخل أولاً)، دون ميعاد محدد.`,doneWa:"إرسال رسالة على واتساب",loading:"جاري التحميل…",
+    e_name:"من فضلك اكتب اسمك.",e_phone:"رقم الهاتف غير صحيح.",e_slot:"اختر اليوم.",e_day_unavailable:"عذراً، هذا اليوم لم يعد متاحاً. اختر يوماً آخر.",e_day_full:"اكتمل العدد في هذا اليوم. اختر يوماً آخر.",e_already_booked:"لديك حجز بالفعل في هذا اليوم والفرع.",
+    e_invalid_branch:"اختر الفرع.",e_rate_limited:"محاولات كثيرة، حاول لاحقاً.",
+    e_too_many_upcoming:"لديك عدة مواعيد قادمة بالفعل. تواصل معنا لتعديلها.",e_generic:"حدث خطأ، حاول مرة أخرى.",
+    done:(n,d,b,w)=>`شكراً ${n}. تم تسجيل حضورك يوم ${d} في ${b}. فترة الكشف ${w}، والدخول للدكتور بنظام الأسبقية (من يصل أولاً يدخل أولاً) دون ميعاد محدد.`,waMsg:(n,d,b)=>`مرحباً، أنا ${n}. قمت بحجز يوم ${d} في ${b}.`,
+    waHello:"مرحباً، أريد الاستفسار بخصوص حجز موعد.",langBtn:"English"},
+  en:{bookNow:"Book your day",chatWa:"Chat on WhatsApp",hours:"Branches & opening hours",galleryTitle:"Gallery",branchesSub:"Choose the branch that suits you. Entry is first come, first served at every branch.",aboutTitle:"About the doctor",watchFb:"Watch on Facebook",videosTitle:"Videos",closed:"Closed",
+    howTitle:"Booking made simple",howSub:"Three simple steps.",
+    s1t:"Pick a branch and day",s1p:"You only see days the branch is open.",s2t:"Enter your details",s2p:"Just your name and WhatsApp number.",s3t:"Come on your day",s3p:"Entry is first come, first served.",
+    formTitle:"Book now",formSub:"Choose a branch and a day, then enter your details. Booking registers your day only; entry is first come, first served.",
+    name:"Full name",phone:"WhatsApp number",service:"Type of visit",notes:"Notes (optional)",
+    pickBranch:"Choose a branch",pickDay:"Choose a day",e_branch:"Please choose a branch first.",selectBranchFirst:"Choose a branch to see available days.",facebook:"Our Facebook page",directions:"Directions on map",confirm:"Register booking",
+    consent:"By registering you agree that we may contact you on WhatsApp about your booking.",
+    doneTitle:"Your booking is registered",another:"Book another day",callUs:"Call us:",
+    selectDayFirst:"Pick the day you want to come.",noDays:"No days are available at this branch right now.",full:"Full",dayInfo:(w)=>`Clinic hours: ${w}. Entry is first come, first served; there is no specific appointment time.`,doneWa:"Send us a WhatsApp message",loading:"Loading…",
+    e_name:"Please enter your name.",e_phone:"That phone number doesn't look right.",e_slot:"Please choose a day.",e_day_unavailable:"Sorry, that day is no longer available. Please pick another.",e_day_full:"That day is full. Please pick another.",e_already_booked:"You already have a booking for this day and branch.",
+    e_invalid_branch:"Please choose a branch.",e_rate_limited:"Too many attempts, try again later.",
+    e_too_many_upcoming:"You already have several upcoming appointments. Please contact us to change them.",e_generic:"Something went wrong, please try again.",
+    done:(n,d,b,w)=>`Thank you ${n}. You are registered for ${d} at the ${b}. Clinic hours are ${w}, and entry to the doctor is first come, first served; there is no specific appointment time.`,waMsg:(n,d,b)=>`Hello, I am ${n}. I booked ${d} at the ${b}.`,
+    waHello:"Hello, I'd like to ask about booking an appointment.",langBtn:"العربية"}
+};
+const DAY_KEYS=['sun','mon','tue','wed','thu','fri','sat'];
+let lang = localStorage.getItem('lang') || ((navigator.language||'').startsWith('en') ? 'en' : 'ar');
+let cfg=null, selBranch=null, selDate=null, daysList=null, rebookToken=new URLSearchParams(location.search).get('r');
+const esc=x=>String(x).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const $=id=>document.getElementById(id), t=k=>I18N[lang][k];
+
+function fmtDate(d){return new Intl.DateTimeFormat(lang==='ar'?'ar-EG':'en-GB',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'))}
+function fmtTime(s){const [h,m]=s.split(':').map(Number);return new Intl.DateTimeFormat(lang==='ar'?'ar-EG':'en-US',{hour:'numeric',minute:'2-digit',timeZone:'UTC'}).format(new Date(Date.UTC(2000,0,1,h,m)))}
+function dayName(d,style){return new Intl.DateTimeFormat(lang==='ar'?'ar-EG':'en-GB',{weekday:style,timeZone:'UTC'}).format(new Date(d+'T00:00:00Z'))}
+function addDays(d,n){const x=new Date(d+'T00:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)}
+
+function applyLang(){
+  document.documentElement.lang=lang; document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+  $('langBtn').textContent=t('langBtn');
+  if(!cfg) return;
+  const c=cfg.clinic, name=c.name[lang];
+  document.title=name; $('brand').textContent=name; $('fName').textContent=name;
+  $('tagline').textContent=c.tagline[lang]; $('about').textContent=c.about[lang];
+  $('fPhone').textContent=c.phone; $('fPhone').href='tel:'+c.phone.replace(/\s/g,'');
+  $('fFb').href=c.facebookUrl;
+  $('fBranches').innerHTML=cfg.branches.map(b=>`<div style="margin-bottom:8px"><strong>${esc(b.name[lang])}</strong><br>${esc(b.address[lang])}${b.phone?`<br><a href="tel:${esc(b.phone)}" dir="ltr">${esc(b.phone)}</a>`:''}<br><a href="${esc(b.mapUrl)}" target="_blank" rel="noopener">${t('directions')}</a></div>`).join('');
+  const wa=`https://wa.me/${c.whatsappNumber}?text=${encodeURIComponent(t('waHello'))}`;
+  $('waCta').href=wa; $('fab').href=wa;
+  const sel=$('service'), cur=sel.value; sel.innerHTML='';
+  cfg.services.forEach(s=>sel.add(new Option(s[lang],s.id))); if(cur) sel.value=cur;
+  $('queueTop').textContent=c.queueNote[lang]; $('docName').textContent=name; $('title').textContent=c.title[lang]; renderHours(); renderMedia(); renderBranches(); renderDays();
+}
+function renderMedia(){
+  const m=cfg.media||{};
+  const hi=$('heroImg'); if(m.heroImage){hi.src=m.heroImage;hi.alt=cfg.clinic.name[lang];hi.hidden=false}
+  $('aboutSec').hidden=!m.aboutImage;
+  if(m.aboutImage){$('aboutImg').src=m.aboutImage;$('aboutImg').alt=cfg.clinic.title[lang];$('aboutTitle').textContent=cfg.clinic.name[lang];$('aboutText').textContent=cfg.clinic.title[lang]+' · '+cfg.clinic.about[lang]}
+  const g=(m.gallery||[]);
+  $('gallery').hidden=!g.length;
+  $('galleryGrid').innerHTML=g.map(x=>`<img loading="lazy" src="${esc(x.src)}" alt="${esc((x.alt&&x.alt[lang])||'')}">`).join('');
+  $('galleryGrid').querySelectorAll('img').forEach(im=>im.onclick=()=>{$('lightbox').querySelector('img').src=im.src;$('lightbox').style.display='flex'});
+  const v=(m.videos||[]);
+  $('videos').hidden=!v.length;
+  $('videosGrid').innerHTML=v.map(x=>x.facebookUrl
+    ?`<div><div class="vid fb"><iframe loading="lazy" allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(x.facebookUrl)}&show_text=false&width=340"></iframe></div><a class="vlink" href="${esc(x.facebookUrl)}" target="_blank" rel="noopener">${t('watchFb')}</a></div>`
+    :`<div class="vid"><video controls preload="metadata" playsinline src="${esc(x.src)}"${x.poster?` poster="${esc(x.poster)}"`:''}></video></div>`).join('');
+}
+$('lightbox').onclick=()=>{$('lightbox').style.display='none'};
+function renderHours(){
+  const order=['sat','sun','mon','tue','wed','thu','fri'];
+  const ref={sun:'2024-01-07',mon:'2024-01-08',tue:'2024-01-09',wed:'2024-01-10',thu:'2024-01-11',fri:'2024-01-12',sat:'2024-01-13'};
+  $('hours').innerHTML=cfg.branches.map(b=>{
+    const rows=order.filter(k=>(b.workingHours[k]||[]).length).map(k=>
+      `<div class="hours-row"><span>${dayName(ref[k],'long')}</span><span>${b.workingHours[k].map(([x,y])=>`${fmtTime(x)} – ${fmtTime(y)}`).join(' · ')}</span></div>`).join('');
+    return `<div class="branch-block"><h4>${esc(b.name[lang])}</h4><div class="addr">${esc(b.address[lang])}${b.phone?` · <a href="tel:${esc(b.phone)}" dir="ltr">${esc(b.phone)}</a>`:''}</div>${rows}<a class="map" href="${esc(b.mapUrl)}" target="_blank" rel="noopener">${t('directions')}</a></div>`}).join('');
+}
+function renderBranches(){
+  $('branches').innerHTML=''; 
+  cfg.branches.forEach(b=>{
+    const el=document.createElement('button'); el.type='button'; el.className='bopt'+(b.id===selBranch?' sel':'');
+    el.innerHTML=`<strong>${esc(b.name[lang])}</strong><small>${esc(b.address[lang])}</small>`;
+    el.onclick=()=>{selBranch=b.id;selDate=null;loadDays()};
+    $('branches').appendChild(el);
+  });
+}
+async function loadDays(){
+  daysList=null; renderBranches(); renderDays();
+  try{const r=await fetch('/api/days?branch='+selBranch);daysList=(await r.json()).days||[]}catch(_){daysList=[]}
+  renderDays();
+}
+function renderDays(){
+  const box=$('days'), note=$('slotNote'), q=$('queueBox'); box.innerHTML=''; q.hidden=true; note.textContent='';
+  if(!selBranch){note.textContent=t('selectBranchFirst');return}
+  if(daysList===null){note.textContent=t('loading');return}
+  if(!daysList.length){note.textContent=t('noDays');return}
+  daysList.slice(0,12).forEach(d=>{
+    const b=document.createElement('button'); b.type='button'; b.className='day'+(d.date===selDate?' sel':''); b.disabled=d.full;
+    b.innerHTML=`<small>${d.full?t('full'):dayName(d.date,'short')}</small><strong>${new Intl.DateTimeFormat(lang==='ar'?'ar-EG':'en-GB',{day:'numeric',month:'short',timeZone:'UTC'}).format(new Date(d.date+'T00:00:00Z'))}</strong>`;
+    b.onclick=()=>{selDate=d.date;renderDays()};
+    box.appendChild(b);
+  });
+  const sel=daysList.find(d=>d.date===selDate);
+  if(!sel){note.textContent=t('selectDayFirst');return}
+  q.hidden=false; q.textContent=t('dayInfo')(`${fmtTime(sel.start)} – ${fmtTime(sel.end)}`);
+}
+$('langBtn').onclick=()=>{lang=lang==='ar'?'en':'ar';localStorage.setItem('lang',lang);applyLang()};
+
+$('form').addEventListener('submit',async e=>{
+  e.preventDefault(); const err=$('err'); err.textContent='';
+  const f=new FormData(e.target);
+  const name=(f.get('name')||'').trim(), phone=(f.get('phone')||'').trim();
+  if(name.length<2){err.textContent=t('e_name');return}
+  if(phone.replace(/\D/g,'').length<8){err.textContent=t('e_phone');return}
+  if(!selBranch){err.textContent=t('e_branch');return}
+  if(!selDate){err.textContent=t('e_slot');return}
+  const btn=$('submit'); btn.disabled=true;
+  try{
+    const r=await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      name,phone,branch:selBranch,service:f.get('service'),notes:f.get('notes'),date:selDate,lang,website:f.get('website')})});
+    const j=await r.json();
+    if(r.ok){
+      $('form').style.display='none'; $('success').style.display='block';
+      const br=cfg.branches.find(x=>x.id===selBranch), bn=br.name[lang], first=name.split(' ')[0];
+      $('doneText').textContent=I18N[lang].done(first,fmtDate(selDate),bn,`${fmtTime(j.appointment.start)} – ${fmtTime(j.appointment.end)}`);
+      $('doneWa').href=`https://wa.me/${cfg.clinic.whatsappNumber}?text=${encodeURIComponent(I18N[lang].waMsg(name,fmtDate(selDate),bn))}`;
+      window.scrollTo({top:$('book').offsetTop-80,behavior:'smooth'});
+    }else{
+      err.textContent=t('e_'+j.error)||t('e_generic');
+      if(r.status===409){selDate=null;loadDays()}
+    }
+  }catch(_){err.textContent=t('e_generic')}
+  btn.disabled=false;
+});
+$('again').onclick=()=>{$('success').style.display='none';$('form').style.display='grid';$('form').reset();selBranch=selDate=null;daysList=null;applyLang()};
+
+(async function init(){
+  applyLang();
+  cfg=await (await fetch('/api/config')).json();
+  if(rebookToken){
+    try{const r=await fetch('/api/rebook/'+rebookToken);if(r.ok){const p=await r.json();
+      $('name').value=p.name;$('phone').value=p.phone;if(p.branch)selBranch=p.branch;if(p.lang&&!localStorage.getItem('lang')){lang=p.lang}
+      setTimeout(()=>$('service').value=p.service,0)}}catch(_){}
+  }
+  applyLang();
+  if(selBranch) loadDays();
+})();
+</script>
+</body>
+</html>
