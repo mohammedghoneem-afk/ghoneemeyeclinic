@@ -338,14 +338,28 @@ async function api(req, res, url) {
   send(res, 404, { error: 'not_found' });
 }
 
+// Static files live in public/. A flat layout also works (index.html, admin.html and the photos next to
+// server.js), which makes uploading from a browser easy. Only safe file types are ever served from the root.
+const PUB = path.join(ROOT, 'public');
+const FLAT_OK = new Set(['.html', '.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.ico', '.mp4', '.webm']);
+function findStatic(p, cb) {
+  const cands = [];
+  const f = path.normalize(path.join(PUB, p));
+  if (f.startsWith(PUB + path.sep)) cands.push(f);
+  const base = path.basename(p);
+  if (base && FLAT_OK.has(path.extname(base).toLowerCase())) cands.push(path.join(ROOT, base));
+  (function next(i) {
+    if (i >= cands.length) return cb(null, null);
+    fs.stat(cands[i], (err, st) => (err || !st.isFile()) ? next(i + 1) : cb(cands[i], st));
+  })(0);
+}
+
 function serveStatic(req, res, url) {
   let p = decodeURIComponent(url.pathname);
   if (p === '/') p = '/index.html';
   if (p === '/admin') p = '/admin.html';
-  const file = path.normalize(path.join(ROOT, 'public', p));
-  if (!file.startsWith(path.join(ROOT, 'public') + path.sep)) { res.writeHead(403); return res.end(); }
-  fs.stat(file, (err, st) => {
-    if (err || !st.isFile()) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found'); }
+  findStatic(p, (file, st) => {
+    if (!file) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found'); }
     const type = MIME[path.extname(file)] || 'application/octet-stream';
     const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
     const cache = /\.(jpe?g|png|webp|gif|mp4|webm)$/.test(file) ? 'public, max-age=86400' : 'no-cache';
