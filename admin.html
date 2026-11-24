@@ -17,6 +17,13 @@ h1{font-size:1.3rem;margin:0}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .stat b{display:block;font-size:1.6rem}.stat span{color:var(--muted);font-size:.85rem}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px;font-size:.85rem;color:var(--muted)}
+.bar label{display:grid;gap:3px}.bar select,.bar input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink,#10283c)}
+.vac{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px}.vac summary{cursor:pointer;font-weight:700}
+.vac .bar{margin:12px 0 6px}.cmsg{font-size:.88rem;margin:4px 0;color:var(--muted)}
+.crow{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line);font-size:.9rem}
+.badge.b-closed{background:#fde8e8;color:#9b1c1c}
+.grp{font-size:1rem;margin:16px 0 8px;color:var(--brand)}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .tab,button.act{font:inherit;border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 12px;cursor:pointer;color:inherit;text-decoration:none;font-size:.88rem;display:inline-block}
 .tab.on{background:var(--brand);color:#fff;border-color:var(--brand)}
@@ -51,12 +58,35 @@ button.act.danger{color:var(--err)}
     <div><span class="pill" id="mode"></span> <button class="act" id="refresh">Refresh</button> <button class="act" id="out">Sign out</button></div>
   </div>
   <div class="stats" id="stats"></div>
+  <details class="vac" id="vac">
+    <summary>🏖️ Close bookings (vacation / days off) <span id="vacCount" class="pill"></span></summary>
+    <div class="bar">
+      <label>Branch <select id="cBranch"></select></label>
+      <label>From <input type="date" id="cFrom"></label>
+      <label>To (optional) <input type="date" id="cTo"></label>
+      <label>Note (optional) <input type="text" id="cReason" maxlength="120" placeholder="e.g. vacation"></label>
+      <button class="act danger" id="cAdd" type="button">Stop bookings</button>
+    </div>
+    <div id="cMsg" class="cmsg"></div>
+    <div id="cList"></div>
+  </details>
   <div class="tabs" id="tabs"></div>
+  <div class="bar">
+    <label>Branch <select id="fBranch"></select></label>
+    <label>Sort <select id="fSort">
+      <option value="dateAsc">Date: earliest first</option>
+      <option value="dateDesc">Date: latest first</option>
+      <option value="branch">Branch, then date</option>
+    </select></label>
+    <label>From <input type="date" id="fFrom"></label>
+    <label>To <input type="date" id="fTo"></label>
+    <button class="act" id="fClear" type="button">Clear</button>
+  </div>
   <div id="list"></div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
-let pw=sessionStorage.getItem('pw')||'', data=null, tab='today', services={}, branches={};
+let barReady=false, pw=sessionStorage.getItem('pw')||'', data=null, tab='today', services={}, branches={};
 const TABS=[['today','Today'],['upcoming','Upcoming'],['missed','Missed'],['recovered','Recovered'],['all','All']];
 
 async function call(path,opts={}){
@@ -70,7 +100,7 @@ async function load(){
     data=await call('/api/admin/appointments');
     services=Object.fromEntries(data.services.map(s=>[s.id,s.en]));
     branches=Object.fromEntries(data.branches.map(b=>[b.id,b.name.en]));
-    $('login').hidden=true;$('app').hidden=false;render();
+    $('login').hidden=true;$('app').hidden=false;if(!barReady){initBar();bindBar();barReady=true}renderClosures();render();
   }catch(e){
     $('app').hidden=true;$('login').hidden=false;
     $('lerr').textContent=pw?e.message:'';
@@ -92,6 +122,51 @@ function filtered(){
     default:return [...a].reverse();
   }
 }
+let fb='', fs='dateAsc', ff='', ft='';
+function view(){
+  let l=filtered();
+  if(fb) l=l.filter(x=>x.branch===fb);
+  if(ff) l=l.filter(x=>x.date>=ff);
+  if(ft) l=l.filter(x=>x.date<=ft);
+  const bn=x=>branches[x.branch]||x.branch, byDate=(a,b)=>a.date.localeCompare(b.date)||(a.sessionStart||'').localeCompare(b.sessionStart||'')||String(a.createdAt||'').localeCompare(String(b.createdAt||''));
+  l=[...l];
+  if(fs==='dateAsc') l.sort(byDate); else if(fs==='dateDesc') l.sort((a,b)=>byDate(b,a));
+  else l.sort((a,b)=>bn(a).localeCompare(bn(b))||byDate(a,b));
+  return l;
+}
+function renderClosures(){
+  const c=[...(data.closures||[])].sort((a,b)=>a.from.localeCompare(b.from)).filter(x=>x.to>=data.today);
+  $('vacCount').textContent=c.length?c.length+' active':'';
+  const sel=$('cBranch'); if(!sel.options.length) sel.innerHTML='<option value="all">All branches</option>'+data.branches.map(b=>`<option value="${b.id}">${b.name.en}</option>`).join('');
+  const L=$('cList'); L.innerHTML=c.length?'':'<div class="cmsg">No closed days right now.</div>';
+  for(const x of c){
+    const r=document.createElement('div'); r.className='crow';
+    const t=document.createElement('div'); t.textContent=`${x.branch==='all'?'All branches':(branches[x.branch]||x.branch)}: ${x.from}${x.to!==x.from?' → '+x.to:''}${x.reason?' · '+x.reason:''}`;
+    const b=document.createElement('button'); b.className='act'; b.textContent='Reopen bookings';
+    b.onclick=async()=>{if(!confirm('Reopen bookings for this period?'))return;await call('/api/admin/closures/'+x.id,{method:'DELETE'});load()};
+    r.append(t,b); L.appendChild(r);
+  }
+}
+$('cAdd').onclick=async()=>{
+  const from=$('cFrom').value, to=$('cTo').value||from;
+  if(!from){$('cMsg').textContent='Choose the first date.';return}
+  if(to<from){$('cMsg').textContent='The end date is before the start date.';return}
+  const r=await call('/api/admin/closures',{method:'POST',body:JSON.stringify({branch:$('cBranch').value,from,to,reason:$('cReason').value})});
+  if(!r.ok){$('cMsg').textContent='Could not save.';return}
+  $('cMsg').textContent=r.affected?`Bookings are now closed. ${r.affected} existing booking(s) fall in this period: find them under Upcoming (marked "clinic closed") and use "Notify closure".`:'Bookings are now closed for this period.';
+  $('cFrom').value=$('cTo').value=$('cReason').value=''; load();
+};
+function initBar(){
+  const sel=$('fBranch'); sel.innerHTML='<option value="">All branches</option>'+data.branches.map(b=>`<option value="${b.id}">${b.name.en}</option>`).join(''); sel.value=fb;
+  $('fSort').value=fs; $('fFrom').value=ff; $('fTo').value=ft;
+}
+function bindBar(){
+  $('fBranch').onchange=e=>{fb=e.target.value;render()};
+  $('fSort').onchange=e=>{fs=e.target.value;render()};
+  $('fFrom').onchange=e=>{ff=e.target.value;render()};
+  $('fTo').onchange=e=>{ft=e.target.value;render()};
+  $('fClear').onclick=()=>{fb='';fs='dateAsc';ff=ft='';initBar();render()};
+}
 function render(){
   const a=data.appointments, today=data.today, wk=new Date(today+'T00:00:00Z'); wk.setUTCDate(wk.getUTCDate()-7);
   const wkS=wk.toISOString().slice(0,10);
@@ -105,19 +180,22 @@ function render(){
   ].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
   $('tabs').innerHTML=TABS.map(([k,l])=>`<button class="tab ${k===tab?'on':''}" data-t="${k}">${l}</button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
-  const list=filtered(), box=$('list'); box.innerHTML='';
+  const list=view(), box=$('list'); box.innerHTML='';
   if(!list.length){box.innerHTML='<div class="empty">Nothing here.</div>';return}
+  let lastB=null;
   for(const x of list){
+    if(fs==='branch'&&x.branch!==lastB){lastB=x.branch;const g=document.createElement('h2');g.className='grp';g.textContent=branches[x.branch]||x.branch;box.appendChild(g)}
     const el=document.createElement('div'); el.className='card';
     const left=document.createElement('div');
     const h=document.createElement('h3'); h.textContent=x.name;
     const bd=document.createElement('span'); bd.className='badge b-'+x.status; bd.textContent=x.status+(x.recovered?' · rebooked':'');
+    if(x.closed){bd.textContent+=' · clinic closed';bd.style.background='#fde8e8';bd.style.color='#9b1c1c'}
     h.appendChild(bd);
     const m1=document.createElement('div'); m1.className='meta'; m1.textContent=`${x.date} (${x.sessionStart}–${x.sessionEnd}) · ${branches[x.branch]||''} · ${services[x.service]||x.service} · +${x.phone}`;
     left.append(h,m1);
     if(x.notes){const n=document.createElement('div');n.className='meta';n.textContent='“'+x.notes+'”';left.appendChild(n)}
     const log=document.createElement('div'); log.className='log';
-    log.textContent=(x.messages||[]).map(g=>`${g.kind}: ${g.status}${g.error?' ('+g.error+')':''}`).join(' · ')+(x.recontactCount?` · contacted: ${x.recontactCount}×`:'');
+    log.textContent=(x.messages||[]).map(g=>`${g.kind}: ${g.status}${g.error?' ('+g.error+')':''}`).join(' · ')+(x.recontactCount?` · contacted: ${x.recontactCount}×`:'')+(x.manualReminderCount?` · reminder sent: ${x.manualReminderCount}×`:'');
     if(log.textContent) left.appendChild(log);
     const act=document.createElement('div'); act.className='actions';
     const btn=(label,cls,fn)=>{const b=document.createElement('button');b.className='act '+(cls||'');b.textContent=label;b.onclick=async()=>{b.disabled=true;await fn();await load()};act.appendChild(b)};
@@ -125,6 +203,12 @@ function render(){
       btn('✓ Attended','',()=>setStatus(x,'attended'));
       btn('No-show','danger',()=>{if(confirm(data.whatsappEnabled?'Mark as no-show and send the recontact message now?':'Mark as no-show?'))return setStatus(x,'missed')});
       btn('Cancel','',()=>setStatus(x,'cancelled'));
+      if(x.closed){const n=document.createElement('a');n.className='act wa';n.target='_blank';n.rel='noopener';n.href=x.closureLink;n.textContent='📲 Notify closure';act.appendChild(n)}
+      if(x.date>=today&&!x.closed){
+        const r=document.createElement('button');r.className='act wa';r.textContent=x.manualReminderCount?'Send reminder again':'📲 Send reminder';
+        r.onclick=()=>{window.open(x.reminderLink,'_blank','noopener');call(`/api/admin/appointments/${x.id}/reminded`,{method:'POST',body:'{}'}).then(load)};
+        act.appendChild(r);
+      }
     }
     if(x.status==='missed'){
       if(data.whatsappEnabled) btn('Resend via API','wa',async()=>{await call(`/api/admin/appointments/${x.id}/recontact`,{method:'POST',body:'{}'})});

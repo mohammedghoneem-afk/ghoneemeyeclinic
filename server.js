@@ -24,7 +24,11 @@ try {
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf8'));
 const env = process.env;
 const PORT = Number(env.PORT) || 3000;
-const BASE_URL = (env.BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+const CONFIGURED_BASE = (env.BASE_URL || env.RENDER_EXTERNAL_URL || '').replace(/\/$/, '');
+const LOCAL_BASE = `http://localhost:${PORT}`;
+let seenBase = ''; // learned from the staff's own (password-protected) requests when no public URL is configured
+const baseUrl = () => CONFIGURED_BASE && !/localhost|127\.0\.0\.1/.test(CONFIGURED_BASE) ? CONFIGURED_BASE : (seenBase || CONFIGURED_BASE || LOCAL_BASE);
+const BASE_URL = CONFIGURED_BASE || LOCAL_BASE;
 const ADMIN_PASSWORD = env.ADMIN_PASSWORD || '';
 const WA_TOKEN = env.WA_TOKEN || '';
 const WA_PHONE_ID = env.WA_PHONE_ID || '';
@@ -39,6 +43,9 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 // ---------- storage ----------
 let db = { appointments: [] };
 try { db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch (_) { /* fresh */ }
+if (!Array.isArray(db.appointments)) db.appointments = [];
+if (!Array.isArray(db.closures)) db.closures = []; // vacation / closed days: {id, branch ('all' or branch id), from, to, reason}
+const isClosed = (branchId, date) => db.closures.some(c => (c.branch === 'all' || c.branch === branchId) && date >= c.from && date <= c.to);
 function save() {
   const tmp = DB_FILE + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(db, null, 2));
@@ -80,7 +87,7 @@ function bookableDays(branchId) {
   const now = nowLocal(), cap = cfg.maxBookingsPerSession || 0, out = [];
   for (let i = 0; i <= cfg.maxAdvanceDays; i++) {
     const date = addDays(now.date, i), s = sessionFor(branch, date);
-    if (!s) continue;
+    if (!s || isClosed(branchId, date)) continue;
     if (i === 0 && now.time >= s.end) continue; // today's session is over
     const booked = db.appointments.filter(a => a.branch === branchId && a.date === date &&
       (a.status === 'booked' || a.status === 'attended')).length;
@@ -109,7 +116,7 @@ const fmtTime = (time, lang) => {
   return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' })
     .format(new Date(Date.UTC(2000, 0, 1, h, m)));
 };
-const rebookUrl = a => `${BASE_URL}/?r=${a.token}#book`;
+const rebookUrl = a => `${baseUrl()}/?r=${a.token}#book`;
 
 function buildMessage(kind, a) {
   const lang = a.lang === 'ar' ? 'ar' : 'en';
@@ -128,13 +135,17 @@ function buildMessage(kind, a) {
       ar: `تذكير: حجزك في ${c} ${d}، فترة الكشف ${w}. الدخول بنظام الأسبقية. إذا لم تستطع الحضور رد علينا لنلغي الحجز.`,
       en: `Reminder: you're booked at ${c} on ${d}, clinic hours ${w}. Entry is first come, first served. If you can't make it, reply and we'll cancel your booking.`
     },
+    closure: {
+      ar: `مرحباً ${name}، نعتذر، العيادة لن تعمل يوم ${d} في ${c}. يمكنك اختيار يوم آخر بسهولة من هنا:\n${url}`,
+      en: `Hello ${name}, we're sorry, the clinic will be closed on ${d} at ${c}. You can easily pick another day here:\n${url}`
+    },
     missed: {
       ar: `مرحباً ${name}، لاحظنا أنك لم تتمكن من الحضور يوم ${d} في ${c}. نأمل أن تكون بخير 🙏\nيمكنك حجز يوم جديد بسهولة من هنا:\n${url}`,
       en: `Hello ${name}, we noticed you couldn't make it on ${d} at ${c}. We hope you're well 🙏\nYou can easily book a new day here:\n${url}`
     }
   }[kind][lang];
-  const params = { confirmation: [name, d, c, w], reminder: [name, d, c, w], missed: [name, d, c, url] }[kind];
-  return { lang, text, params, template: cfg.whatsapp.templates[kind][lang] };
+  const params = { confirmation: [name, d, c, w], reminder: [name, d, c, w], missed: [name, d, c, url], closure: [name, d, c, url] }[kind];
+  return { lang, text, params, template: (cfg.whatsapp.templates[kind] || {})[lang] };
 }
 
 async function sendWhatsApp(a, kind) {
@@ -177,14 +188,15 @@ async function tick() {
       const start = toMin(a.date, a.sessionStart), end = toMin(a.date, a.sessionEnd);
       if (a.status === 'booked') {
         const until = start - now;
-        if (WA_ENABLED && !a.reminderAt && until > 0 && until <= au.reminderHoursBefore * 60) {
+        const closed = isClosed(a.branch, a.date);
+        if (WA_ENABLED && !closed && !a.reminderAt && until > 0 && until <= au.reminderHoursBefore * 60) {
           // Booked inside the reminder window? The confirmation already covers it — skip the reminder.
           const leadAtBooking = until + (Date.now() - new Date(a.createdAt).getTime()) / 60000;
           if (leadAtBooking <= au.reminderHoursBefore * 60) { a.reminderAt = 'skipped'; save(); }
           else { a.reminderAt = new Date().toISOString(); save(); await sendWhatsApp(a, 'reminder'); }
         }
         // After the clinic session ends (+grace), anyone not marked "attended" is flagged as missed.
-        if (au.autoMarkMissed && now >= end + au.missedGraceMinutes) {
+        if (au.autoMarkMissed && !closed && now >= end + au.missedGraceMinutes) {
           a.status = 'missed'; a.missedAt = new Date().toISOString(); save();
           await recontact(a);
         }
@@ -249,11 +261,16 @@ function adminAuth(req, res) {
     if (rateLimited('adminfail:' + ip, 10, 15 * 60000)) { send(res, 429, { error: 'Too many attempts. Try later.' }); return false; }
     send(res, 401, { error: 'Wrong password' }); return false;
   }
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  if (host && /^[\w.-]+(:\d+)?$/.test(host)) seenBase = `${/^(localhost|127\.0\.0\.1)(:|$)/.test(host) ? 'http' : 'https'}://${host}`;
   return true;
 }
 function publicAppt(a) {
-  const m = buildMessage('missed', a);
-  return { ...a, recontactLink: `https://wa.me/${a.phone}?text=${encodeURIComponent(m.text)}`,
+  const m = buildMessage('missed', a), r = buildMessage('reminder', a);
+  const cl = buildMessage('closure', a);
+  return { ...a, closed: a.status === 'booked' && isClosed(a.branch, a.date),
+    closureLink: `https://wa.me/${a.phone}?text=${encodeURIComponent(cl.text)}`, recontactLink: `https://wa.me/${a.phone}?text=${encodeURIComponent(m.text)}`,
+    reminderLink: `https://wa.me/${a.phone}?text=${encodeURIComponent(r.text)}`,
     chatLink: `https://wa.me/${a.phone}` };
 }
 
@@ -300,7 +317,9 @@ async function api(req, res, url) {
       name, phone, service: service.id, branch: branch.id, date, sessionStart: day.start, sessionEnd: day.end,
       notes, lang, status: 'booked', createdAt: new Date().toISOString(), messages: [], recontactCount: 0
     };
-    db.appointments.push(a); save();
+    db.appointments.push(a);
+    for (const o of db.appointments) if (o.status === 'missed' && !o.recovered && o.phone === phone && o !== a && hasLaterBooking(o)) o.recovered = true;
+    save();
     sendWhatsApp(a, 'confirmation'); // no-op while WhatsApp API is off
     return send(res, 201, { ok: true, appointment: { date, start: day.start, end: day.end, branch: branch.id, name } });
   }
@@ -311,15 +330,37 @@ async function api(req, res, url) {
     if (req.method === 'GET' && p === '/api/admin/appointments') {
       const list = [...db.appointments].sort((x, y) => (x.date + x.createdAt).localeCompare(y.date + y.createdAt)).map(publicAppt);
       return send(res, 200, { appointments: list, today: nowLocal().date, whatsappEnabled: WA_ENABLED,
-        whatsappLive: WA_LIVE, services: cfg.services, branches: cfg.branches });
+        whatsappLive: WA_LIVE, closures: db.closures, services: cfg.services, branches: cfg.branches });
     }
-    const m = p.match(/^\/api\/admin\/appointments\/([\w-]+)(\/recontact|\/contacted)?$/);
+    if (p === '/api/admin/closures' && req.method === 'POST') {
+      let b; try { b = await readBody(req); } catch (_) { return send(res, 400, { error: 'bad_request' }); }
+      const okDate = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '');
+      const branchId = b.branch === 'all' ? 'all' : (branchOf(b.branch) || {}).id;
+      if (!branchId || !okDate(b.from)) return send(res, 400, { error: 'bad_request' });
+      const to = okDate(b.to) ? b.to : b.from;
+      if (to < b.from) return send(res, 400, { error: 'bad_range' });
+      const c = { id: crypto.randomUUID(), branch: branchId, from: b.from, to, reason: String(b.reason || '').slice(0, 120), createdAt: new Date().toISOString() };
+      db.closures.push(c); save();
+      const affected = db.appointments.filter(a => a.status === 'booked' && isClosed(a.branch, a.date) && (c.branch === 'all' || a.branch === c.branch) && a.date >= c.from && a.date <= c.to).length;
+      return send(res, 201, { ok: true, closure: c, affected });
+    }
+    const cm = p.match(/^\/api\/admin\/closures\/([\w-]+)$/);
+    if (cm && req.method === 'DELETE') {
+      const i = db.closures.findIndex(x => x.id === cm[1]);
+      if (i < 0) return send(res, 404, { error: 'not_found' });
+      db.closures.splice(i, 1); save(); return send(res, 200, { ok: true });
+    }
+    const m = p.match(/^\/api\/admin\/appointments\/([\w-]+)(\/recontact|\/contacted|\/reminded)?$/);
     if (m && req.method === 'POST') {
       const a = db.appointments.find(x => x.id === m[1]);
       if (!a) return send(res, 404, { error: 'not_found' });
       if (m[2] === '/recontact') {
         if (!WA_ENABLED) return send(res, 400, { error: 'whatsapp_disabled' });
         const e = await recontact(a); return send(res, 200, { ok: true, message: e });
+      }
+      if (m[2] === '/reminded') { // staff sent a reminder by hand via the prefilled WhatsApp link
+        a.manualReminderCount = (a.manualReminderCount || 0) + 1; a.lastManualReminderAt = new Date().toISOString();
+        save(); return send(res, 200, { ok: true });
       }
       if (m[2] === '/contacted') { // staff contacted the patient themselves (e.g. via the prefilled WhatsApp link)
         a.recontactCount = (a.recontactCount || 0) + 1; a.lastRecontactAt = new Date().toISOString(); a.contactedBy = 'staff';
