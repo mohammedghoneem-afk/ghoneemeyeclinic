@@ -25,7 +25,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink);padding:8px 14px}
 .btn-ghost:hover{background:var(--accent)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.hero{padding:56px 0 40px}
+.hero{padding:48px 0 24px}
 .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
 .hero h1{font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.2;margin:0 0 14px}
 .hero p{color:var(--muted);font-size:1.1rem;margin:0 0 24px;max-width:46ch}
@@ -33,12 +33,30 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 .chip{display:inline-block;background:var(--accent);color:var(--brand-d);font-weight:600;font-size:.9rem;padding:4px 14px;border-radius:99px;margin-bottom:12px}
 .lead{color:var(--ink)!important;font-size:1.15rem!important;font-weight:600}
 .portrait{position:relative}.portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;border-radius:28px;display:block;box-shadow:0 20px 50px rgba(10,92,153,.22)}
-.bcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.bcards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .bcards .branch-block{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
-.about{display:grid;grid-template-columns:320px 1fr;gap:32px;align-items:center}
+.about{display:grid;grid-template-columns:300px 1fr;gap:40px;align-items:center}
 .about img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:24px;display:block}
-.videos .vid.fb{aspect-ratio:9/16;max-width:340px;width:100%;margin-inline:auto}
-.vlink{display:block;text-align:center;font-size:.85rem;margin-top:6px;color:var(--brand);font-weight:600}
+.aboutName{font-size:1.25rem;font-weight:700;margin:0 0 14px;color:var(--brand)}
+.creds{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:12px}
+.creds li{display:flex;gap:12px;align-items:flex-start;font-size:1.05rem}
+.creds li::before{content:"";flex:0 0 10px;height:10px;margin-top:.6em;border-radius:50%;background:var(--brand)}
+.social{display:flex;gap:8px;flex-wrap:wrap}
+.social a{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:6px 16px;font-size:.92rem;font-weight:600;text-decoration:none;color:var(--brand);background:var(--card)}
+.social a:hover{background:var(--accent)}
+.svcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.svc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+.svc h3{margin:0;font-size:1.05rem;line-height:1.5}
+.svc p{margin:6px 0 0;color:var(--muted);font-size:.93rem}
+.svc ul{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:6px;color:var(--muted);font-size:.95rem}
+.svc li{display:flex;gap:10px;align-items:baseline}
+.svc li::before{content:"";flex:0 0 7px;height:7px;border-radius:50%;background:var(--brand);transform:translateY(-1px)}
+.vlist{display:grid;gap:10px;max-width:760px}
+.vrow{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-decoration:none}
+.vrow:hover{border-color:var(--brand)}
+.vrow .play{flex:0 0 40px;height:40px;border-radius:50%;background:var(--accent);color:var(--brand);display:grid;place-items:center;font-size:.9rem;padding-inline-start:3px}
+.vrow .vtxt{flex:1;min-width:0}.vrow strong{display:block;font-size:1rem}.vrow small{display:block;color:var(--muted);font-size:.9rem;line-height:1.5;margin-top:2px}
+.vrow .go{color:var(--brand);font-weight:600;font-size:.88rem;white-space:nowrap}
 .hero-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:20px;margin-bottom:14px;display:block}
 .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:16px;display:block;cursor:zoom-in}
@@ -59,9 +77,9 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 .queue{background:var(--accent);border-radius:12px;padding:10px 14px;font-size:.92rem;color:var(--brand-d);margin:0 0 10px}
 .hours-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:2px 12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.95rem}
 .hours-row:last-child{border:0}.hours-row .closed{color:var(--muted)}
-section{padding:40px 0}
-h2{font-size:1.6rem;margin:0 0 8px}
-.sub{color:var(--muted);margin:0 0 24px}
+section{padding:36px 0}
+h2{font-size:1.5rem;margin:0 0 16px}
+.sub{color:var(--muted);margin:-8px 0 20px}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
 .step b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--brand);margin-bottom:10px}
@@ -86,12 +104,16 @@ textarea{resize:vertical;min-height:70px}
 .success{display:none;text-align:center;padding:28px 10px}
 .success .tick{width:64px;height:64px;border-radius:50%;background:#dcfae6;color:var(--ok);display:grid;place-items:center;font-size:2rem;margin:0 auto 12px}
 footer{border-top:1px solid var(--line);margin-top:30px;padding:28px 0 90px;color:var(--muted);font-size:.95rem}
-footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+footer .wrap{display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:space-between;align-items:flex-start}
+.fcols{flex:1 1 320px;max-width:46ch}
+.fside{display:grid;gap:10px;flex:0 1 260px}.fside strong{color:var(--ink)}
 .fab{position:fixed;inset-block-end:18px;inset-inline-end:18px;background:var(--wa);color:#fff;border-radius:999px;padding:13px 20px;font-weight:700;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.2);display:flex;gap:8px;align-items:center;z-index:20}
 .fab svg{width:22px;height:22px;fill:#fff}
 @media(max-width:560px){.brand{font-size:.95rem;line-height:1.2}header .nav{gap:6px}header .btn{white-space:nowrap;padding:8px 12px;font-size:.88rem}header .wrap{height:60px}}
 @media(max-width:780px){
-  .hero .wrap,.book-grid,.steps,.branches,.about{grid-template-columns:1fr}
+  .hero .wrap,.book-grid,.branches,.about,.bcards{grid-template-columns:1fr}
+  .about img{max-width:320px;margin-inline:auto}
+  .vrow{flex-wrap:wrap}.vrow .go{width:100%;padding-inline-start:54px}
   .book{padding:20px}
 }
 </style>
@@ -111,8 +133,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
     <span class="chip" id="title"></span>
     <h1 id="docName"></h1>
     <p id="tagline" class="lead"></p>
-    <p id="about"></p>
-    <div class="queue" id="queueTop"></div>
     <div class="cta">
       <a class="btn btn-primary" href="#book" data-i="bookNow"></a>
       <a class="btn btn-ghost" id="waCta" target="_blank" rel="noopener" data-i="chatWa"></a>
@@ -121,27 +141,25 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <div class="portrait"><img id="heroImg" alt="" hidden></div>
 </div></section>
 
+<section id="aboutSec"><div class="wrap about">
+  <img id="aboutImg" alt="" hidden>
+  <div>
+    <h2 data-i="aboutTitle"></h2>
+    <p class="aboutName" id="aboutName"></p>
+    <ul class="creds" id="creds"></ul>
+    <div class="social" id="aboutSocial"></div>
+  </div>
+</div></section>
+
+<section id="servicesSec" hidden><div class="wrap">
+  <h2 data-i="servicesTitle"></h2>
+  <div class="svcs" id="svcs"></div>
+</div></section>
+
 <section id="branchesSec"><div class="wrap">
   <h2 data-i="hours"></h2><p class="sub" data-i="branchesSub"></p>
   <div class="bcards" id="hours"></div>
 </div></section>
-
-<section id="aboutSec" hidden><div class="wrap about">
-  <img id="aboutImg" alt="">
-  <div><h2 id="aboutTitle"></h2><p class="sub" id="aboutText"></p></div>
-</div></section>
-
-<section><div class="wrap">
-  <h2 data-i="howTitle"></h2><p class="sub" data-i="howSub"></p>
-  <div class="steps">
-    <div class="step"><b>1</b><h4 data-i="s1t"></h4><p data-i="s1p"></p></div>
-    <div class="step"><b>2</b><h4 data-i="s2t"></h4><p data-i="s2p"></p></div>
-    <div class="step"><b>3</b><h4 data-i="s3t"></h4><p data-i="s3p"></p></div>
-  </div>
-</div></section>
-
-<section id="gallery" hidden><div class="wrap"><h2 data-i="galleryTitle"></h2><p class="sub"></p><div class="gallery" id="galleryGrid"></div></div></section>
-<section id="videos" hidden><div class="wrap"><h2 data-i="videosTitle"></h2><p class="sub"></p><div class="videos" id="videosGrid"></div></div></section>
 
 <section id="book"><div class="wrap">
   <h2 data-i="formTitle"></h2><p class="sub" data-i="formSub"></p>
@@ -176,11 +194,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
     <a class="btn btn-primary" id="doneWa" target="_blank" rel="noopener" data-i="doneWa" style="margin-inline-end:8px"></a><button class="btn btn-ghost" id="again" type="button" data-i="another"></button>
   </div>
 </div></section>
+<section id="videos" hidden><div class="wrap"><h2 data-i="videosTitle"></h2><div class="vlist" id="videosGrid"></div></div></section>
+<section id="gallery" hidden><div class="wrap"><h2 data-i="galleryTitle"></h2><div class="gallery" id="galleryGrid"></div></div></section>
 </main>
 
 <footer><div class="wrap">
-  <div id="fBranches"></div>
-  <div><strong id="fName"></strong><br><span data-i="callUs"></span> <a id="fPhone" dir="ltr"></a><br><a id="fFb" target="_blank" rel="noopener" data-i="facebook"></a></div>
+  <div class="fcols"><span id="fNote"></span></div>
+  <div class="fside"><strong id="fName"></strong><span><span data-i="callUs"></span> <a id="fPhone" dir="ltr"></a></span><div class="social" id="fSocial"></div></div>
 </div></footer>
 
 <div id="lightbox"><img alt=""></div>
@@ -191,7 +211,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
 
 <script>
 const I18N = {
-  ar:{bookNow:"احجز يومك",chatWa:"تواصل عبر واتساب",hours:"الفروع ومواعيد العمل",galleryTitle:"صور من العيادة",branchesSub:"اختر الفرع الأنسب لك. الدخول بنظام الأسبقية في جميع الفروع.",aboutTitle:"عن الدكتور",watchFb:"شاهد على فيسبوك",videosTitle:"فيديوهات",closed:"مغلق",
+  ar:{bookNow:"احجز يومك",chatWa:"تواصل عبر واتساب",hours:"الفروع ومواعيد العمل",galleryTitle:"جاليري",branchesSub:"اختر الفرع الأنسب لك. الدخول للدكتور بنظام الأسبقية في جميع الفروع، دون موعد محدد.",aboutTitle:"من نحن",servicesTitle:"خدماتنا",watchFb:"شاهد على فيسبوك",videosTitle:"فيديوهات",video:"فيديو",footNote:"الدخول للدكتور بنظام الأسبقية (من يصل أولاً يدخل أولاً) في جميع الفروع.",closed:"مغلق",
     howTitle:"الحجز بسيط وسريع",howSub:"ثلاث خطوات بسيطة.",
     s1t:"اختر الفرع واليوم",s1p:"نعرض لك الأيام المتاحة في كل فرع.",s2t:"اكتب بياناتك",s2p:"الاسم ورقم الواتساب فقط.",s3t:"احضر في يومك",s3p:"الدخول للدكتور بنظام الأسبقية، من يصل أولاً يدخل أولاً.",
     formTitle:"احجز الآن",formSub:"اختر الفرع واليوم واكتب بياناتك. الحجز يسجل يومك فقط، والدخول بنظام الأسبقية.",
@@ -205,7 +225,7 @@ const I18N = {
     e_too_many_upcoming:"لديك عدة مواعيد قادمة بالفعل. تواصل معنا لتعديلها.",e_generic:"حدث خطأ، حاول مرة أخرى.",
     done:(n,d,b,w)=>`شكراً ${n}. تم تسجيل حضورك يوم ${d} في ${b}. فترة الكشف ${w}، والدخول للدكتور بنظام الأسبقية (من يصل أولاً يدخل أولاً) دون ميعاد محدد.`,waMsg:(n,d,b)=>`مرحباً، أنا ${n}. قمت بحجز يوم ${d} في ${b}.`,
     waHello:"مرحباً، أريد الاستفسار بخصوص حجز موعد.",langBtn:"English"},
-  en:{bookNow:"Book your day",chatWa:"Chat on WhatsApp",hours:"Branches & opening hours",galleryTitle:"Gallery",branchesSub:"Choose the branch that suits you. Entry is first come, first served at every branch.",aboutTitle:"About the doctor",watchFb:"Watch on Facebook",videosTitle:"Videos",closed:"Closed",
+  en:{bookNow:"Book your day",chatWa:"Chat on WhatsApp",hours:"Branches & opening hours",galleryTitle:"Gallery",branchesSub:"Choose the branch that suits you. Entry to the doctor is first come, first served at every branch, with no specific appointment time.",aboutTitle:"About us",servicesTitle:"Our services",watchFb:"Watch on Facebook",videosTitle:"Videos",video:"Video",footNote:"Entry to the doctor is first come, first served at every branch.",closed:"Closed",
     howTitle:"Booking made simple",howSub:"Three simple steps.",
     s1t:"Pick a branch and day",s1p:"You only see days the branch is open.",s2t:"Enter your details",s2p:"Just your name and WhatsApp number.",s3t:"Come on your day",s3p:"Entry is first come, first served.",
     formTitle:"Book now",formSub:"Choose a branch and a day, then enter your details. Booking registers your day only; entry is first come, first served.",
@@ -238,30 +258,33 @@ function applyLang(){
   if(!cfg) return;
   const c=cfg.clinic, name=c.name[lang];
   document.title=name; $('brand').textContent=name; $('fName').textContent=name;
-  $('tagline').textContent=c.tagline[lang]; $('about').textContent=c.about[lang];
+  $('tagline').textContent=c.tagline[lang];
   $('fPhone').textContent=c.phone; $('fPhone').href='tel:'+c.phone.replace(/\s/g,'');
-  $('fFb').href=c.facebookUrl;
-  $('fBranches').innerHTML=cfg.branches.map(b=>`<div style="margin-bottom:8px"><strong>${esc(b.name[lang])}</strong><br>${esc(b.address[lang])}${b.phone?`<br><a href="tel:${esc(b.phone)}" dir="ltr">${esc(b.phone)}</a>`:''}<br><a href="${esc(b.mapUrl)}" target="_blank" rel="noopener">${t('directions')}</a></div>`).join('');
+  const soc=(c.social||[]).map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label[lang])}</a>`).join('');
+  const off=c.offered||[]; $('servicesSec').hidden=!off.length;
+  $('svcs').innerHTML=off.map(s=>`<div class="svc"><h3>${esc(s.title[lang])}</h3>${s.note?`<p>${esc(s.note[lang])}</p>`:''}${s.items?`<ul>${s.items.map(i=>`<li>${esc(i[lang])}</li>`).join('')}</ul>`:''}</div>`).join('');
+  $('fSocial').innerHTML=soc; $('aboutSocial').innerHTML=soc;
+  $('aboutName').textContent=name; $('creds').innerHTML=(c.credentials||[]).map(x=>`<li>${esc(x[lang])}</li>`).join('');
+  $('fNote').textContent=t('footNote');
   const wa=`https://wa.me/${c.whatsappNumber}?text=${encodeURIComponent(t('waHello'))}`;
   $('waCta').href=wa; $('fab').href=wa;
   const sel=$('service'), cur=sel.value; sel.innerHTML='';
   cfg.services.forEach(s=>sel.add(new Option(s[lang],s.id))); if(cur) sel.value=cur;
-  $('queueTop').textContent=c.queueNote[lang]; $('docName').textContent=name; $('title').textContent=c.title[lang]; renderHours(); renderMedia(); renderBranches(); renderDays();
+  $('docName').textContent=name; $('title').textContent=c.title[lang]; renderHours(); renderMedia(); renderBranches(); renderDays();
 }
 function renderMedia(){
   const m=cfg.media||{};
   const hi=$('heroImg'); if(m.heroImage){hi.src=m.heroImage;hi.alt=cfg.clinic.name[lang];hi.hidden=false}
-  $('aboutSec').hidden=!m.aboutImage;
-  if(m.aboutImage){$('aboutImg').src=m.aboutImage;$('aboutImg').alt=cfg.clinic.title[lang];$('aboutTitle').textContent=cfg.clinic.name[lang];$('aboutText').textContent=cfg.clinic.title[lang]+' · '+cfg.clinic.about[lang]}
+  const ai=$('aboutImg'); if(m.aboutImage){ai.src=m.aboutImage;ai.alt=cfg.clinic.title[lang];ai.hidden=false}
   const g=(m.gallery||[]);
   $('gallery').hidden=!g.length;
   $('galleryGrid').innerHTML=g.map(x=>`<img loading="lazy" src="${esc(x.src)}" alt="${esc((x.alt&&x.alt[lang])||'')}">`).join('');
   $('galleryGrid').querySelectorAll('img').forEach(im=>im.onclick=()=>{$('lightbox').querySelector('img').src=im.src;$('lightbox').style.display='flex'});
   const v=(m.videos||[]);
   $('videos').hidden=!v.length;
-  $('videosGrid').innerHTML=v.map(x=>x.facebookUrl
-    ?`<div><div class="vid fb"><iframe loading="lazy" allowfullscreen src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(x.facebookUrl)}&show_text=false&width=340"></iframe></div><a class="vlink" href="${esc(x.facebookUrl)}" target="_blank" rel="noopener">${t('watchFb')}</a></div>`
-    :`<div class="vid"><video controls preload="metadata" playsinline src="${esc(x.src)}"${x.poster?` poster="${esc(x.poster)}"`:''}></video></div>`).join('');
+  $('videosGrid').innerHTML=v.map((x,i)=>{
+    const ti=(x.title&&x.title[lang])||`${t('video')} ${i+1}`, su=(x.summary&&x.summary[lang])||'';
+    return `<a class="vrow" href="${esc(x.facebookUrl)}" target="_blank" rel="noopener"><span class="play">▶</span><span class="vtxt"><strong>${esc(ti)}</strong>${su?`<small>${esc(su)}</small>`:''}</span><span class="go">${t('watchFb')} ↗</span></a>`}).join('');
 }
 $('lightbox').onclick=()=>{$('lightbox').style.display='none'};
 function renderHours(){

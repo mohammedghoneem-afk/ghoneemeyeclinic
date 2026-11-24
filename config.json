@@ -20,9 +20,111 @@
       "en": "Entry to the doctor is first come, first served, with no specific times. Booking registers your day only."
     },
     "title": {
-      "ar": "استشاري جراحات الشبكية والجسم الزجاجي",
-      "en": "Vitreoretinal Consultant"
-    }
+      "ar": "استشاري جراحات العين",
+      "en": "Ophthalmology consultant"
+    },
+    "credentials": [
+      {
+        "ar": "استشاري جراحات العين",
+        "en": "Ophthalmology consultant"
+      },
+      {
+        "ar": "زميل جامعة جلاسجو بالمملكة المتحدة",
+        "en": "Fellow of the Royal College of Surgeons, Glasgow"
+      },
+      {
+        "ar": "مدرس طب وجراحة العين - كلية الطب - جامعة الإسكندرية",
+        "en": "Lecturer of ophthalmology - Faculty of Medicine - Alexandria University"
+      }
+    ],
+    "social": [
+      {
+        "id": "facebook",
+        "url": "https://www.facebook.com/share/17MPReCKBr/?mibextid=wwXIfr",
+        "label": {
+          "ar": "فيسبوك",
+          "en": "Facebook"
+        }
+      },
+      {
+        "id": "instagram",
+        "url": "https://www.instagram.com/mohammedghoneem",
+        "label": {
+          "ar": "إنستجرام",
+          "en": "Instagram"
+        }
+      }
+    ],
+    "offered": [
+      {
+        "title": {
+          "ar": "كشف شامل للعيون",
+          "en": "Full ophthalmology consultation"
+        }
+      },
+      {
+        "title": {
+          "ar": "جراحة المياه البيضاء",
+          "en": "Cataract surgery"
+        },
+        "note": {
+          "ar": "بعدسات مميزة (Premium) ومتعددة البؤر (Multifocal) وممتدة المدى (EDOF)",
+          "en": "With premium, multifocal and EDOF intraocular lenses (IOLs)"
+        }
+      },
+      {
+        "title": {
+          "ar": "الليزك وجراحات تصحيح النظر",
+          "en": "LASIK and refractive surgeries"
+        },
+        "items": [
+          {
+            "ar": "فيمتو ليزك (Femto LASIK)",
+            "en": "Femto LASIK"
+          },
+          {
+            "ar": "فيمتو سمايل (Femto SMILE)",
+            "en": "Femto SMILE"
+          }
+        ]
+      },
+      {
+        "title": {
+          "ar": "جراحات الشبكية والجسم الزجاجي لمختلف الأمراض",
+          "en": "Vitreoretinal surgeries for various diseases"
+        },
+        "items": [
+          {
+            "ar": "انفصال الشبكية",
+            "en": "Retinal detachment"
+          },
+          {
+            "ar": "ثقب مركز الإبصار",
+            "en": "Macular hole"
+          },
+          {
+            "ar": "تليفات سطح الشبكية",
+            "en": "Epiretinal membranes"
+          },
+          {
+            "ar": "مضاعفات اعتلال الشبكية السكري",
+            "en": "Diabetic retinopathy complications"
+          }
+        ]
+      },
+      {
+        "title": {
+          "ar": "الليزر لعلاج اعتلال الشبكية السكري",
+          "en": "Laser treatment for diabetic retinopathy"
+        }
+      },
+      {
+        "title": {
+          "ar": "الحقن داخل الجسم الزجاجي بأنواعها المختلفة",
+          "en": "Intravitreal injections of various types"
+        }
+      }
+    ]
   },
   "branches": [
     {
@@ -182,23 +284,55 @@
           "ar": "د. محمد غنيم في المؤتمر السنوي العشرين للجمعية المصرية للشبكية والجسم الزجاجي",
           "en": "Dr. Mohamed Ghoneem at the 20th annual meeting of the Egyptian Vitreoretinal Society"
         }
+      },
+      {
+        "src": "/media/euretina.jpg",
+        "alt": {
+          "ar": "د. محمد غنيم في المؤتمر الأوروبي للشبكية (يوريتينا) الخامس والعشرين، باريس ٢٠٢٥",
+          "en": "Dr. Mohamed Ghoneem at the 25th EURETINA Congress, Paris 2025"
+        }
+      },
+      {
+        "src": "/media/talk.jpg",
+        "alt": {
+          "ar": "د. محمد غنيم أثناء إلقاء محاضرة علمية",
+          "en": "Dr. Mohamed Ghoneem giving a scientific lecture"
+        }
       }
     ],
     "videos": [
       {
-        "facebookUrl": "https://www.facebook.com/share/v/1CNg7BDqaq/?mibextid=wwXIfr"
+        "facebookUrl": "https://www.facebook.com/share/r/1CunPeNQvr/?mibextid=wwXIfr",
+        "title": {
+          "ar": "عدسات الجيل الجديد في عمليات المياه البيضاء",
+          "en": "New-generation lenses in cataract surgery"
+        },
+        "summary": {
+          "ar": "فيديو يوضح استخدام الدكتور محمد غنيم عدسات الجيل الجديد في عمليات المياه البيضاء",
+          "en": "A video showing Dr. Mohamed Ghoneem's use of new-generation lenses in cataract surgery."
+        }
       },
       {
-        "facebookUrl": "https://www.facebook.com/share/r/1MSDKcUY7t/?mibextid=wwXIfr"
+        "facebookUrl": "https://www.facebook.com/share/v/1C8KWPAAcx/?mibextid=wwXIfr",
+        "title": {
+          "ar": "عملية المياه البيضاء في ٥ دقائق",
+          "en": "Cataract surgery in 5 minutes"
+        },
+        "summary": {
+          "ar": "فيديو يوضح خطوات عملية المياه البيضاء في ٥ دقائق فقط بواسطة الدكتور محمد غنيم",
+          "en": "A video showing the steps of cataract surgery in just 5 minutes, by Dr. Mohamed Ghoneem."
+        }
       },
       {
-        "facebookUrl": "https://www.facebook.com/share/v/1KgAyuC1rD/?mibextid=wwXIfr"
-      },
-      {
-        "facebookUrl": "https://www.facebook.com/share/r/1ADTg6kSuZ/?mibextid=wwXIfr"
-      },
-      {
-        "facebookUrl": "https://www.facebook.com/share/r/19uWE8wa3o/?mibextid=wwXIfr"
+        "facebookUrl": "https://www.facebook.com/share/r/19jNwVXyPr/?mibextid=wwXIfr",
+        "title": {
+          "ar": "نتيجة عملية شبكية معقدة",
+          "en": "Result of a complex retinal surgery"
+        },
+        "summary": {
+          "ar": "فيديو يوضح نتيجة عملية شبكية معقدة تمت بواسطة الدكتور محمد غنيم",
+          "en": "A video showing the result of a complex retinal surgery performed by Dr. Mohamed Ghoneem."
+        }
       }
     ]
   }
