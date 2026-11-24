@@ -91,8 +91,9 @@ input,select,textarea{width:100%;font:inherit;padding:12px 14px;border:1px solid
 input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:1px}
 textarea{resize:vertical;min-height:70px}
 .hp{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
-.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
-.day{flex:0 0 auto;min-width:66px;padding:8px 6px;text-align:center;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font:inherit;color:inherit}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
+.book,.book-grid>*,.book form,.book label,.book input,.book select,.book textarea{min-width:0;max-width:100%}
+.day{min-width:0;padding:8px 6px;text-align:center;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font:inherit;color:inherit}
 .day small{display:block;color:var(--muted);font-size:.75rem}.day strong{font-size:1.15rem}
 .day.sel{background:var(--brand);color:#fff;border-color:var(--brand)}.day.sel small{color:#d4efeb}
 .day:disabled{opacity:.4;cursor:not-allowed}
